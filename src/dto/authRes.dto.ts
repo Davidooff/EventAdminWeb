@@ -7,7 +7,7 @@ export default interface ReqResDto {
 
 
 export interface ReqPayloadDto<T> extends ReqResDto {
-  body?: T
+  body: T
 };
 
 export interface ReqErrPayload {

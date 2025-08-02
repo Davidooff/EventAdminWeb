@@ -1,34 +1,21 @@
 import * as React from 'react';
-import PersonIcon from '@mui/icons-material/Person';
-import { type Navigation } from '@toolpad/core/AppProvider';
 import { type DataModel, type DataSource, DataSourceCache, List } from '@toolpad/core/Crud';
-import { useDemoRouter } from '@toolpad/core/internal';
 
-const NAVIGATION: Navigation = [
-  {
-    segment: 'people',
-    title: 'People',
-    icon: <PersonIcon />,
-    pattern: 'people{/:personId}*',
-  },
-];
 
 export interface Event extends DataModel {
   id: number;
   title: string;
   audience: string[];
-  
-  age: number;
 }
 
 let peopleStore: Event[] = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
-  { id: 5, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 6, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 7, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
+  // { id: 1, lastName: 'Snow', firstName: 'Jon', age: 14 },
+  // { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 31 },
+  // { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 31 },
+  // { id: 4, lastName: 'Stark', firstName: 'Arya', age: 11 },
+  // { id: 5, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
+  // { id: 6, lastName: 'Frances', firstName: 'Rossini', age: 36 },
+  // { id: 7, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
 ];
 
 export const peopleDataSource: DataSource<Event> &
@@ -36,8 +23,8 @@ export const peopleDataSource: DataSource<Event> &
   fields: [
     { field: 'id', headerName: 'ID' },
     {
-      field: 'firstName',
-      headerName: 'First name',
+      field: 'title',
+      headerName: 'Title',
     },
     {
       field: 'lastName',
@@ -130,22 +117,9 @@ export const peopleDataSource: DataSource<Event> &
 
 const peopleCache = new DataSourceCache();
 
-interface DemoProps {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * Remove this when copying and pasting into your project.
-   */
-  window?: () => Window;
-}
 
-export default function CrudList(props: DemoProps) {
-  const { window } = props;
 
-  const router = useDemoRouter('/people');
-
-  // Remove this const when copying and pasting into your project.
-  const demoWindow = window !== undefined ? window() : undefined;
-
+export default function CrudList() {
   const handleRowClick = React.useCallback((personId: string | number) => {
     console.log(`Row click with id ${personId}`);
   }, []);

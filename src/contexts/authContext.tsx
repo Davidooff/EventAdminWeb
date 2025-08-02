@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext, useEffect } from "react";
 import { authService } from "../services/authService";
 import type LoginDto from "../dto/login.dto";
 import type ReqResDto from "../dto/authRes.dto";
+import { authenticatedFetch } from "../utils/requests/api";
 
 interface AuthContextType {
   isAuthed: boolean;
@@ -14,6 +15,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthed, setIsAuthed] = useState(false);
+  const [adminOptions, setAdminOptions] = useState<number[] | null>(null)
   const [isLoading, setIsLoading] = useState(true); // To show a loader on initial check
 
   // On mount, check if we have a valid session by trying to refresh
@@ -47,9 +49,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = () => {
-    // Call a backend /auth/logout endpoint if you have one
     setIsAuthed(false);
-    // Clear any stored tokens (e.g., from secure httpOnly cookies via backend)
   };
 
   const value = { isAuthed, login, logout, isLoading };

@@ -16,11 +16,11 @@ export function parseResponseToStatus(res: Response): ReqResDto {
 async function parseResponse<T>(res: Response): Promise<ReqPayloadDto<T>> {
   if (!res.ok) {
     const errBody = await res.json().catch(() => ({ title: "Request failed", detail: res.statusText }));
-    return { ok: false, statusCode: res.status, errText: errBody };
+    return { ok: false, statusCode: res.status, errText: errBody, body: undefined as T };
   }
   // Handle 204 No Content case
   if (res.status === 204) {
-      return { ok: true, statusCode: res.status, body: undefined };
+      return { ok: true, statusCode: res.status, body: undefined as T };
   }
   const body = await res.json();
   return { ok: true, statusCode: res.status, body: body as T };
