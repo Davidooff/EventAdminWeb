@@ -1,69 +1,41 @@
-# React + TypeScript + Vite
+# EventAdminWeb
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Admin panel for the event platform, written in React 19 and TypeScript with Material UI. It talks to [EventAppApi](https://github.com/Davidooff/EventAppApi), the ASP.NET Core backend.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **React 19** + **TypeScript**, built with **Vite**
+- **Material UI 7** + **Toolpad Core** (dashboard layout, CRUD list views)
+- **React Router 7** (data router, nested and protected routes)
 
-## Expanding the ESLint configuration
+## Features
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Sign-in with cookie-based JWT.** The API sets the access and refresh tokens as cookies, so the frontend never stores tokens itself.
+- **Silent token refresh.** `authenticatedFetch` retries a request once after a `401` by calling `/api/auth/refresh`. If the refresh fails too, it fires an `auth-failed` event that the `AuthProvider` handles by logging the user out.
+- **Protected routes.** Everything except `/login` sits under a `ProtectedRoute` that redirects to sign-in and remembers where the user was going.
+- **Role-driven navigation.** The dashboard menu is built from `GET /api/auth/admin`, so each user sees only the panels (Events, Users, Categories) their role allows. Access is still enforced by the backend.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  contexts/authContext.tsx    auth state, login/logout, auth-failed listener
+  services/authService.ts     login / register / refresh calls
+  utils/requests/             fetch wrapper with refresh-and-retry, typed responses
+  pages/                      login, dashboard shell, protected route
+  dashboard/events.tsx        events list (Toolpad CRUD)
+  routes.ts                   router configuration
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Running locally
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Start EventAppApi first (it listens on `http://localhost:5009`). The Vite dev server proxies `/api` to it, so there are no CORS problems in development.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install
+npm run dev      # http://localhost:5173
 ```
+
+## Status
+
+Work in progress. Sign-in, refresh, protected routing and the role-based menu are done. The events page uses a Toolpad data source that is not yet wired to the events API, and the Users and Categories pages are not built yet.
